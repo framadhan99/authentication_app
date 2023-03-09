@@ -98,8 +98,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             InkWell(
               onTap: () {
-                AutServices().signInWithGoogle();
-                print('coba');
+                AuthServices().googleSignIn();
               },
               child: Container(
                 height: 35,
