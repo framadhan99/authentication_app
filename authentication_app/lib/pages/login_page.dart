@@ -1,11 +1,55 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/button_primary.dart';
 import '../widgets/my_textfield.dart';
 import '../widgets/text_primary.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+
+  final passwordController = TextEditingController();
+
+  void signIn() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+    Navigator.pop(context);
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        showErrorMessage('User not found');
+      } else if (e.code == 'wrong-password') {
+        showErrorMessage('Wrong Password');
+      }
+    }
+  }
+
+  void showErrorMessage(String message) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Center(
+              child: Text(message),
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +65,13 @@ class LoginPage extends StatelessWidget {
               text: 'Welcome Back !',
             ),
             const SizedBox(height: 50),
-            const MyTextField(
+            MyTextField(
+              inputController: emailController,
               textHint: 'Email',
             ),
             const SizedBox(height: 20),
-            const MyTextField(
+            MyTextField(
+              inputController: passwordController,
               obsecure: true,
               textHint: 'Password',
             ),
@@ -33,7 +79,10 @@ class LoginPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const ButtonPrimary(
+                ButtonPrimary(
+                  tap: () {
+                    signIn();
+                  },
                   text: 'Sign In',
                 ),
                 TextButton(
