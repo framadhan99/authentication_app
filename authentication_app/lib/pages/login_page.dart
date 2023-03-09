@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../services/auth_services.dart';
 import '../widgets/button_primary.dart';
 import '../widgets/my_textfield.dart';
 import '../widgets/text_primary.dart';
@@ -95,21 +96,29 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             const SizedBox(height: 20),
-            Container(
-              height: 35,
-              width: 180,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.asset('assets/google-logo.png'),
-                  const Text(
-                    'Sign In with Google',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  )
-                ],
+            InkWell(
+              onTap: () {
+                AutServices().signInWithGoogle();
+                print('coba');
+              },
+              child: Container(
+                height: 35,
+                width: 180,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image.asset('assets/google-logo.png'),
+                    const Text(
+                      'Sign In with Google',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
               ),
             )
           ],
