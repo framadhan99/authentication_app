@@ -5,31 +5,35 @@ import '../widgets/button_primary.dart';
 import '../widgets/my_textfield.dart';
 import '../widgets/text_primary.dart';
 
-class LoginPage extends StatefulWidget {
-  final Function()? onTap;
-  LoginPage({super.key, this.onTap});
+class RegisterPage extends StatefulWidget {
+  RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   void signIn() async {
     showDialog(
       context: context,
       builder: (context) {
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(),
         );
       },
     );
     Navigator.pop(context);
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
+      if (passwordController.text == confirmPasswordController.text) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailController.text, password: passwordController.text);
+      } else {
+        showErrorMessage('Password don\' match!');
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         showErrorMessage('User not found');
@@ -54,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 25),
         child: Column(
@@ -62,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const TextPrimary(
-              text: 'Welcome Back !',
+              text: 'Create your account now',
             ),
             const SizedBox(height: 50),
             MyTextField(
@@ -75,6 +79,12 @@ class _LoginPageState extends State<LoginPage> {
               obsecure: true,
               textHint: 'Password',
             ),
+            const SizedBox(height: 20),
+            MyTextField(
+              inputController: confirmPasswordController,
+              obsecure: true,
+              textHint: 'Confirm Password',
+            ),
             const SizedBox(height: 35),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,34 +93,17 @@ class _LoginPageState extends State<LoginPage> {
                   tap: () {
                     signIn();
                   },
-                  text: 'Sign In',
+                  text: 'Sign Up',
                 ),
-                TextButton(
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(decoration: TextDecoration.underline),
-                  ),
-                  onPressed: widget.onTap,
-                )
               ],
             ),
             const SizedBox(height: 20),
-            Container(
-              height: 35,
-              width: 180,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.asset('assets/google-logo.png'),
-                  const Text(
-                    'Sign In with Google',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  )
-                ],
+            TextButton(
+              child: const Text(
+                'Sign In',
+                style: TextStyle(decoration: TextDecoration.underline),
               ),
+              onPressed: () {},
             )
           ],
         ),
